@@ -7,8 +7,8 @@ This is a **container-bound Google Apps Script** for a Google Sheets copy of `Da
 1. Upload `Dashboard (1).xlsx` to Google Drive and open it as a **Google Sheet**. Check that these tabs and their headers survived conversion: `Print_Queue_Data` and `Entry_Sheet_Data`. The supplied executive tab is spelled `Execiutive Summary`; the script uses that name, or creates it if missing.
 2. In the Google Sheet, open **Extensions → Apps Script**. Create one Apps Script file for each local `.js` file in this repository and paste its contents. The Apps Script editor displays these as `.gs` files. Apps Script shares global functions across files; their filename order does not control execution.
 3. In `Config.js`, set `nightlyHour` to an hour **after both upstream sheets have finished updating**. The default is 3 a.m. in the spreadsheet's time zone. Set the spreadsheet time zone in **File → Settings**.
-4. Run `refreshDashboard` once in Apps Script and authorize it. Inspect the three dashboard tabs, `_Dashboard_Data`, and `_Dashboard_Log`.
-5. Run `installNightlyRefresh` once. It replaces any earlier trigger for `refreshDashboard` in this Apps Script project. The Apps Script time trigger runs once daily within the selected hour; it does not guarantee an exact minute. You can also use the **Sullivan Dashboard → Refresh now** menu.
+4. Run `authorizeScript` from `Authorize.js` once as the account that will own the refresh, and accept the Apps Script permission prompts. It checks access to the bound spreadsheet, both source tabs, document properties, and trigger management without changing the sheet. Then run `refreshDashboard` once and inspect the three dashboard tabs, `_Dashboard_Data`, and `_Dashboard_Log`.
+5. Run `installNightlyRefresh` once from that account. It replaces that account's earlier `refreshDashboard` trigger. The Apps Script time trigger runs once daily within the selected hour; it does not guarantee an exact minute. You can also use the **Sullivan Dashboard → Refresh now** menu.
 
 The script owns and redraws `Execiutive Summary`, `Entry Statistics`, `Printer Statistics`, and `_Dashboard_Data`. Keep manual notes elsewhere. Source data is never cleared. All chart data is on the dedicated `_Dashboard_Data` tab; the dashboard tabs have no side data. `_Dashboard_Log` records each module's outcome, chart count, source row count, warnings, and errors. It warns if an input has not changed since the last successful run. Failed header validation stops before any dashboard is changed.
 
@@ -38,6 +38,8 @@ The production charts have a small inset from the cell edges, Sullivan colors, c
 | `buildExecutiveDashboard_`, `buildEntryDashboard_`, `buildPrinterDashboard_`, and other helpers | **No triggers** | `refreshDashboard` calls these in order. |
 
 You can create the daily trigger either by running `installNightlyRefresh` **or** in Apps Script's **Triggers → Add Trigger**: choose `refreshDashboard`, **Time-driven**, **Day timer**, and an hour after the source imports. Use one method so the refresh does not run twice. Daily time-driven triggers run within an approximate hour, not at an exact minute. Install the trigger from the account that should own and run the refresh.
+
+When transferring ownership, have the previous trigger owner remove their `refreshDashboard` trigger. The new account cannot see or replace a trigger installed by another account, and leaving both triggers in place can run the refresh twice.
 
 An edit or change trigger is not a dependable replacement when another script or an API populates the source tabs: programmatic writes do not fire those spreadsheet triggers. If the import function is in the same Apps Script project, it can call `refreshDashboard()` after both imports succeed; otherwise keep the daily schedule after the imports. A form-submit trigger is only relevant if form submissions directly update this spreadsheet.
 
