@@ -45,7 +45,7 @@ function buildEntryDashboard_(context) {
 function drawEntryHeatmap_(sheet, entry, timezone) {
   section_(sheet, 82, 'Visits by day and hour');
   const header = ['Day'].concat((entry[0] || []).slice(21, 32).map(function (value) {
-    return hourLabel_(value, timezone);
+    return hour12Label_(value, timezone);
   }));
   const rows = sourceBlock_(entry, 2, [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32])
     .slice(0, 7).map(function (r) { return [String(r[0])].concat(r.slice(1).map(count_)); });
@@ -69,4 +69,16 @@ function drawEntryHeatmap_(sheet, entry, timezone) {
   });
   sheet.getRange(85, 2, rows.length, 11).setBackgrounds(backgrounds);
   note_(sheet, 93, 'Cell color shows relative traffic within the observed weekday and hour grid.');
+}
+
+/** Format heatmap headers as 12-hour times without changing other hour charts. */
+function hour12Label_(value, timezone) {
+  const label = hourLabel_(value, timezone);
+  const match = /^(\d{1,2})(?::(\d{2}))?(?::\d{2})?$/.exec(label.trim());
+  if (!match) return label;
+  const hour = Number(match[1]);
+  const minute = Number(match[2] || 0);
+  if (hour > 23 || minute > 59) return label;
+  return (hour % 12 || 12) + ':' + String(minute).padStart(2, '0') +
+    (hour < 12 ? ' AM' : ' PM');
 }

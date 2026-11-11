@@ -14,21 +14,23 @@ function buildExecutiveDashboard_(context) {
   const uniqueUsers = users.length ? users[0][1] : 0;
   const once = users.filter(function (r) { return r[0] === 'Visited Exactly Once'; });
   const repeat = Math.max(0, uniqueUsers - (once.length ? once[0][1] : 0));
+  const tenPlusRow = users.find(function (r) { return r[0] === 'Visited 10+ Times'; });
+  if (!tenPlusRow) context.warnings.push('Entry user metric "Visited 10+ Times" is missing; executive card shows N/A.');
+  const tenPlus = tenPlusRow ? tenPlusRow[1] : 'N/A';
   const requested = sumColumn_(projects, 1);
   const flagged = sumColumn_(projects, 2);
   const completed = sumColumn_(projects, 3);
   const equipmentUses = sumColumn_(equipment, 1);
-  const printers = series_(print, 2, 7, [8]).filter(function (r) { return r[1] > 0; }).length;
   const topProject = topRows_(projects.map(function (r) { return [r[0], r[1]]; }), 1);
 
   card_(sheet, 5, 1, 3, 'Space visits', swipes, c.teal, 'Entry swipes in source period');
   card_(sheet, 5, 4, 3, 'Students reached', uniqueUsers, c.blue, 'Unique space users');
   card_(sheet, 5, 7, 3, 'Print projects', requested, c.orange, 'Requested print jobs');
   card_(sheet, 5, 10, 3, 'Equipment uses', equipmentUses, c.teal, 'Logged tool interactions');
-  card_(sheet, 10, 1, 3, 'Completed prints', completed, c.blue, 'Resolved as completed');
-  card_(sheet, 10, 4, 3, 'Flagged prints', flagged, c.orange, requested ? (100 * flagged / requested).toFixed(1) + '% of requests' : 'No requests');
-  card_(sheet, 10, 7, 3, 'Returning students', repeat, c.teal, 'Visited more than once');
-  card_(sheet, 10, 10, 3, 'Used printers', printers, c.blue, 'Printers with logged requests');
+  card_(sheet, 10, 1, 4, 'Completed prints', completed, c.blue, 'Resolved as completed');
+  card_(sheet, 10, 5, 4, 'Returning students', repeat, c.teal, 'Visited more than once');
+  card_(sheet, 10, 9, 4, 'Students with 10+ visits', tenPlus, c.orange,
+    'Students who visited 10 or more times');
   section_(sheet, 16, 'At a glance');
   addDashboardChart_(context, sheet, 'executive_project_mix', ['Project type', 'Requests'],
     projects.map(function (r) { return [r[0], r[1]]; }), Charts.ChartType.PIE,
@@ -45,6 +47,6 @@ function buildExecutiveDashboard_(context) {
     {isStacked: true, vAxis: {minValue: 0, title: 'Requests'}});
   note_(sheet, 55, 'Most common project: ' + (topProject.length ? topProject[0][0] : 'No data') +
     '. Counts reflect the current summary tables; the entry and print source periods may differ.');
-  context.metrics = {swipes: swipes, uniqueUsers: uniqueUsers, requested: requested,
-    completed: completed, flagged: flagged, equipmentUses: equipmentUses};
+  context.metrics = {swipes: swipes, uniqueUsers: uniqueUsers, tenPlusUsers: tenPlus,
+    requested: requested, completed: completed, flagged: flagged, equipmentUses: equipmentUses};
 }
