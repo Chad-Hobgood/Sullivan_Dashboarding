@@ -16,16 +16,16 @@
 | Tab | Views |
 | --- | --- |
 | `Execiutive Summary` | Visits, distinct and returning students, students with 10+ visits, print requests and completions, equipment use, project mix, monthly activity, popular tools |
-| `Entry Statistics` | Monthly and recent visitors, visit frequency and cadence, hourly and weekday traffic, equipment, and a day and hour heatmap with AM/PM labels |
+| `Entry Statistics` | Monthly and recent visitors, visit frequency and cadence, hourly and weekday traffic, equipment, a day and hour heatmap, village participation, and weekly village swipes and unique members |
 | `Printer Statistics` | Project types, monthly mix, printers, queue action hours, anonymous ranked requestors, flag reasons, turnaround distributions, and duration averages |
 
-The inputs are pre-aggregated summary tables, so counts come from the supplied data rather than reconstructed event records. The entry monthly table has month names without years; its August-to-July order is preserved. Print month dates include a year when present. The dashboard cannot infer filament colors or weight, village, approval status, or print restarts without more source data. A mismatch between flag reason totals and project outcome flags is logged as a warning.
+The inputs are pre-aggregated summary tables, so counts come from the supplied data rather than reconstructed event records. The entry monthly table has month names without years; its August-to-July order is preserved. The village participation table uses `AO:AR`: the number who swiped in at least once, total village membership, and the source percentage displayed to two decimals. Weekly swipes use `AT:AX`; weekly unique members use `AZ:BD`. Each weekly view shows the three village series and the source total separately, so the total is not counted again in the village chart. Weeks with zero visits remain visible, including a first week that begins in July and ends in August. Print month dates include a year when present. The dashboard cannot infer filament colors or weight, approval status, or print restarts without more source data. A mismatch between flag reason totals and project outcome flags is logged as a warning.
 
 The executive 10+ visits card reads the `Visited 10+ Times` row in `Entry_Sheet_Data`. If it is missing, the card shows `N/A` and the refresh logs a warning. The printer Top requestors chart sorts by request count and writes `Student 1`, `Student 2`, and so on to `_Dashboard_Data`; source names are not copied into that chart dataset.
 
 ## Source layout and new data
 
-The builders use fixed column numbers and some fixed starting rows. `loadDashboardSources_` reads each source sheet's full used range, then checks specific headers. `sourceBlock_` reads rows until the first blank label in the selected column. The entry heatmap reads seven weekday rows and eleven hour columns.
+The builders use fixed column numbers and some fixed starting rows. `loadDashboardSources_` reads each source sheet's full used range, then checks specific headers. The village blocks require the exact labels in `AO:AR`, `AT`, `AX`, `AZ`, and `BD`, and matching village names in the two weekly blocks. `sourceBlock_` reads rows until the first blank label in the selected column. The entry heatmap reads seven weekday rows and eleven hour columns.
 
 Adding a separate table or new columns without moving existing data does not automatically create a dashboard view. Inserting columns or rows before referenced tables can break the fixed positions or header checks. New rows directly after an existing table, with no blank label row, may be treated as part of that table. Very large source sheets can also slow refreshes because the full used ranges are read.
 

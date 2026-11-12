@@ -23,7 +23,7 @@ Apps Script shares global functions across all project files. Names ending in `_
 | [`Config.js`](../Config.js) | `DASHBOARD_CONFIG` | Sheet names, nightly hour, and colors. |
 | [`Source_check.js`](../Source_check.js) | `loadDashboardSources_`, `requireHeaders_`, `sourceBlock_`, `series_`, `hourLabel_`, `monthLabel_` | Read and validate sources; extract series and format labels. Other helpers count, sum, trim, and fingerprint source data. |
 | [`Exec.js`](../Exec.js) | `buildExecutiveDashboard_` | Calculate executive cards and charts, including the 10+ visits card. |
-| [`Entry.js`](../Entry.js) | `buildEntryDashboard_`, `drawEntryHeatmap_`, `hour12Label_` | Build entry charts and the AM/PM day and hour heatmap. |
+| [`Entry.js`](../Entry.js) | `buildEntryDashboard_`, `drawEntryHeatmap_`, `drawVillageEntry_`, `hour12Label_` | Build entry charts, the AM/PM day and hour heatmap, village participation, and weekly village charts. |
 | [`Printer_logs.js`](../Printer_logs.js) | `buildPrinterDashboard_` | Build printer charts and replace requestor names with rank labels before writing chart data. |
 | [`Renderer.js`](../Renderer.js) | `prepareDashboardSheet_`, `section_`, `card_`, `note_`, `writeChartData_`, `addDashboardChart_`, `styleDashboardChart_`, `topRows_` | Clear and lay out dashboard tabs, write chart datasets, insert styled charts, and rank rows. |
 | [`Handler.js`](../Handler.js) | `writeDashboardLog_` | Append results and diagnostics to `_Dashboard_Log`. |

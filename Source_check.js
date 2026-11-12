@@ -10,6 +10,17 @@ function loadDashboardSources_(spreadsheet) {
   const entry = entrySheet.getDataRange().getValues();
   const print = printSheet.getDataRange().getValues();
   requireHeaders_(entry, {1: 'Hour of Day', 6: 'User Metric', 34: 'Month', 38: 'Equipment'}, names.entrySource);
+  requireHeaders_(entry, {41: 'Village', 42: 'Swiped In', 43: 'Total Members',
+    44: 'Swiped In %', 46: 'Week', 50: 'Total Swipes', 52: 'Week',
+    56: 'Total Unique Members'}, names.entrySource);
+  for (let column = 47; column <= 49; column++) {
+    const swipesVillage = String((entry[0] || [])[column - 1] || '').trim();
+    const uniqueVillage = String((entry[0] || [])[column + 5] || '').trim();
+    if (!swipesVillage || swipesVillage !== uniqueVillage) {
+      throw new Error(names.entrySource + '!' + columnLetter_(column) + '1 and ' +
+        columnLetter_(column + 6) + '1 must name the same village.');
+    }
+  }
   requireHeaders_(print, {1: 'Assistant Name', 7: 'Printer Name', 22: 'Project Type', 27: 'Month', 43: 'Completed Print Duration by Printer'}, names.printSource, {43: 16});
   if (entry.length < 2 || print.length < 2) {
     throw new Error('Source sheets contain headers but no data. Dashboard was left intact.');

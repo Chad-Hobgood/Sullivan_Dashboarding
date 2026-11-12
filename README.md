@@ -4,7 +4,7 @@ This is a Google Apps Script bound to a Google Sheets copy of `Dashboard (1).xls
 
 ## Set up and run
 
-1. Convert `Dashboard (1).xlsx` to a Google Sheet. Confirm that `Entry_Sheet_Data` and `Print_Queue_Data` are present.
+1. Convert `Dashboard (1).xlsx` to a Google Sheet. Confirm that `Entry_Sheet_Data` and `Print_Queue_Data` are present, including the village blocks in `Entry_Sheet_Data!AO:BD`.
 2. Open **Extensions → Apps Script** from that sheet. Create an Apps Script file for each root `.js` file in this repository and paste in its contents. Apps Script shares functions across these files.
 3. Set the spreadsheet time zone in **File → Settings**. In `Config.js`, set `nightlyHour` to an hour after both source tabs finish updating; the default is 3 a.m.
 4. As the account that will run the dashboard, run `authorizeScript` once in Apps Script and accept the permission prompts.
